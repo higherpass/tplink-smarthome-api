@@ -93,10 +93,12 @@ interface CameraEvents {
 declare interface Camera {
   on<U extends keyof CameraEvents>(event: U, listener: CameraEvents[U]): this;
 
+  /*
   emit<U extends keyof CameraEvents>(
     event: U,
     ...args: Parameters<CameraEvents[U]>
   ): boolean;
+  */
 }
 
 /**
