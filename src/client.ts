@@ -26,7 +26,7 @@ type DeviceDiscovery = { status: string; seenOnDiscovery: number };
 type AnyDeviceDiscovery = (Bulb | Camera | Plug) & Partial<DeviceDiscovery>;
 
 type SysinfoResponse = { system: { get_sysinfo: Sysinfo } };
-type CameraRawResponse = { system: { get_sysinfo: { system: Sysinfo } } };
+//type CameraRawResponse = { system: { get_sysinfo: { system: Sysinfo } } };
 type EmeterResponse = PlugEmeterResponse | BulbEmeterResponse | CameraEmeterResponse;
 type CameraEmeterResponse = {
   emeter?: { get_realtime?: { err_code: number } & Realtime };
