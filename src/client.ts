@@ -52,10 +52,10 @@ type DeviceOptionsDiscovery =
       ConstructorParameters<typeof Plug>[0],
       'client' | 'sysInfo' | 'host'
     >
-    | MarkOptional<
-    ConstructorParameters<typeof Camera>[0],
-    'client' | 'sysInfo' | 'host'
-  >
+  | MarkOptional<
+      ConstructorParameters<typeof Camera>[0],
+      'client' | 'sysInfo' | 'host'
+    >
   | MarkOptional<
       ConstructorParameters<typeof Bulb>[0],
       'client' | 'sysInfo' | 'host'
@@ -174,21 +174,21 @@ export interface ClientEventEmitter {
    */
   on(
     event: 'device-new',
-    listener: (device: Device | Bulb | Plug) => void
+    listener: (device: Device | Bulb | Camera | Plug) => void
   ): this;
   /**
    * Follow up response from device.
    */
   on(
     event: 'device-online',
-    listener: (device: Device | Bulb | Plug) => void
+    listener: (device: Device | Bulb | Camera | Plug) => void
   ): this;
   /**
    * No response from device.
    */
   on(
     event: 'device-offline',
-    listener: (device: Device | Bulb | Plug) => void
+    listener: (device: Device | Bulb | Camera | Plug) => void
   ): this;
   /**
    * First response from Bulb.
@@ -234,9 +234,9 @@ export interface ClientEventEmitter {
    */
   on(event: 'error', listener: (error: Error) => void): this;
 
-  emit(event: 'device-new', device: Device | Bulb | Plug): boolean;
-  emit(event: 'device-online', device: Device | Bulb | Plug): boolean;
-  emit(event: 'device-offline', device: Device | Bulb | Plug): boolean;
+  emit(event: 'device-new', device: Device | Bulb | Camera | Plug): boolean;
+  emit(event: 'device-online', device: Device | Bulb | Camera | Plug): boolean;
+  emit(event: 'device-offline', device: Device | Bulb | Camera | Plug): boolean;
   emit(event: 'bulb-new', device: Bulb): boolean;
   emit(event: 'bulb-online', device: Bulb): boolean;
   emit(event: 'bulb-offline', device: Bulb): boolean;
@@ -523,7 +523,7 @@ export default class Client extends EventEmitter implements ClientEventEmitter {
     switch (true) {
       case /plug/i.test(type):
         return 'plug';
-        case /camerea/i.test(type):
+        case /camera/i.test(type):
           return 'camera';
       case /bulb/i.test(type):
         return 'bulb';
@@ -710,6 +710,13 @@ export default class Client extends EventEmitter implements ClientEventEmitter {
       if (!isPlugSysinfo(sysInfo)) {
         throw new TypeError(
           util.format('Expected PlugSysinfo but received: %O', sysInfo)
+        );
+      }
+      device.setSysInfo(sysInfo);
+    } else if (device instanceof Camera) {
+      if (!isCameraSysinfo(sysInfo)) {
+        throw new TypeError(
+          util.format('Expected CameraSysinfo but received: %O', sysInfo)
         );
       }
       device.setSysInfo(sysInfo);

@@ -50,6 +50,7 @@ export interface DeviceConstructorOptions {
 // type SysinfoTypeValues =
 //   | 'IOT.SMARTPLUGSWITCH'
 //   | 'IOT.SMARTBULB'
+//   | 'IOT.IPCAMERA'
 //   | 'IOT.RANGEEXTENDER.SMARTPLUG';
 
 export type CommonSysinfo = {
@@ -96,7 +97,7 @@ export function isPlugSysinfo(candidate: unknown): candidate is PlugSysinfo {
   );
 }
 
-export function isCameraSysinfo(candidate: unknown): candidate is PlugSysinfo {
+export function isCameraSysinfo(candidate: unknown): candidate is CameraSysinfo {
   return (
     isCommonSysinfo(candidate) &&
     ('type' in candidate || 'mic_type' in candidate) &&
@@ -106,7 +107,7 @@ export function isCameraSysinfo(candidate: unknown): candidate is PlugSysinfo {
 }
 
 function isSysinfo(candidate: unknown): candidate is Sysinfo {
-  return isPlugSysinfo(candidate) || isBulbSysinfo(candidate);
+  return isPlugSysinfo(candidate) || isBulbSysinfo(candidate) || isCameraSysinfo(candidate);
 }
 
 export interface DeviceEventEmitter {
@@ -287,13 +288,15 @@ export default abstract class Device
    *
    * Based on cached value of `sysinfo.[type|mic_type]`
    */
-  get deviceType(): 'plug' | 'bulb' | 'device' {
+  get deviceType(): 'plug' | 'bulb' | 'camera' | 'device' {
     const { type } = this;
     switch (true) {
       case /plug/i.test(type):
         return 'plug';
       case /bulb/i.test(type):
         return 'bulb';
+      case /camera/i.test(type):
+        return 'camera';
       default:
         return 'device';
     }

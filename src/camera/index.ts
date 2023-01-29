@@ -49,7 +49,7 @@ export type CameraSysinfo = CommonSysinfo & {
   mic_type: string; // 'IOT.IPCAMERA';
   mic_mac: string;
   description: string;
-  //camera_state: CameraSysinfoState;
+  light_state: CameraSysinfoState;
   length?: number;
 };
 
@@ -153,7 +153,7 @@ class Camera extends Device {
    * @borrows Lighting#getLightState as Bulb.lighting#getLightState
    * @borrows Lighting#setLightState as Bulb.lighting#setLightState
    */
-  //readonly lighting;
+  readonly lighting: any;
 
   /**
    * @borrows Time#getTime as Bulb.time#getTime
@@ -346,14 +346,14 @@ class Camera extends Device {
    * @param  value - true: on, false: off
    * @throws {@link ResponseError}
    */
-  /*
+
   async setPowerState(
     value: boolean,
     sendOptions?: SendOptions
   ): Promise<boolean> {
     return this.lighting.setLightState({ on_off: value ? 1 : 0 }, sendOptions);
   }
-  */
+
 
   /**
    * Toggles state of Bulb.
