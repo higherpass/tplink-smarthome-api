@@ -257,7 +257,6 @@ export function extractResponse<T>(
   path: string,
   typeGuardFn: (arg0: unknown) => boolean
 ): T {
-  console.log(response);
   // @ts-ignore just ignore it
   if (response.system !== undefined) {
     // @ts-ignore just keep ignoring it
