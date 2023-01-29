@@ -6,9 +6,10 @@ import type log from 'loglevel';
 import { encrypt, decrypt } from 'tplink-smarthome-crypto';
 import type { MarkOptional } from 'ts-essentials';
 
-import Device, { isBulbSysinfo, isPlugSysinfo } from './device';
+import Device, { isBulbSysinfo, isPlugSysinfo, isCameraSysinfo } from './device';
 import type { Sysinfo } from './device';
 import Bulb from './bulb';
+import Camera from './camera';
 import Plug, { hasSysinfoChildren } from './plug';
 import createLogger from './logger';
 import type { Logger } from './logger';
@@ -19,10 +20,10 @@ import { Realtime } from './shared/emeter';
 
 const discoveryMsgBuf = encrypt('{"system":{"get_sysinfo":{}}}');
 
-export type AnyDevice = Bulb | Plug;
+export type AnyDevice = Bulb | Plug | Camera;
 
 type DeviceDiscovery = { status: string; seenOnDiscovery: number };
-type AnyDeviceDiscovery = (Bulb | Plug) & Partial<DeviceDiscovery>;
+type AnyDeviceDiscovery = (Bulb | Camera | Plug) & Partial<DeviceDiscovery>;
 
 type SysinfoResponse = { system: { get_sysinfo: Sysinfo } };
 type EmeterResponse = PlugEmeterResponse | BulbEmeterResponse;
@@ -38,10 +39,12 @@ type DiscoveryResponse = SysinfoResponse & EmeterResponse;
 
 type AnyDeviceOptions =
   | ConstructorParameters<typeof Bulb>[0]
+  | ConstructorParameters<typeof Camera>[0]
   | ConstructorParameters<typeof Plug>[0];
 
 type AnyDeviceOptionsCon =
   | MarkOptional<ConstructorParameters<typeof Plug>[0], 'client' | 'sysInfo'>
+  | MarkOptional<ConstructorParameters<typeof Camera>[0], 'client' | 'sysInfo'>
   | MarkOptional<ConstructorParameters<typeof Bulb>[0], 'client' | 'sysInfo'>;
 
 type DeviceOptionsDiscovery =
@@ -49,6 +52,10 @@ type DeviceOptionsDiscovery =
       ConstructorParameters<typeof Plug>[0],
       'client' | 'sysInfo' | 'host'
     >
+    | MarkOptional<
+    ConstructorParameters<typeof Camera>[0],
+    'client' | 'sysInfo' | 'host'
+  >
   | MarkOptional<
       ConstructorParameters<typeof Bulb>[0],
       'client' | 'sysInfo' | 'host'
@@ -111,7 +118,7 @@ export interface DiscoveryOptions {
    * @defaultValue 3
    */
   offlineTolerance?: number;
-  deviceTypes?: Array<'plug' | 'bulb'>;
+  deviceTypes?: Array<'plug' | 'camera' | 'bulb'>;
   /**
    * MAC will be normalized, comparison will be done after removing special characters (`:`,`-`, etc.) and case insensitive, glob style *, and ? in pattern are supported
    * @defaultValue []
@@ -419,6 +426,22 @@ export default class Client extends EventEmitter implements ClientEventEmitter {
   }
 
   /**
+   * Creates Camera object.
+   *
+   * See [Device constructor]{@link Device} and [Camera constructor]{@link Camera} for valid options.
+   * @param   deviceOptions - passed to [Camera constructor]{@link Camera}
+   */
+  getCamera(
+    deviceOptions: MarkOptional<ConstructorParameters<typeof Camera>[0], 'client'>
+  ): Camera {
+    return new Camera({
+      defaultSendOptions: this.defaultSendOptions,
+      ...deviceOptions,
+      client: this,
+    });
+  }
+
+  /**
    * Creates {@link Plug} object.
    *
    * See [Device constructor]{@link Device} and [Plug constructor]{@link Plug} for valid options.
@@ -478,6 +501,9 @@ export default class Client extends EventEmitter implements ClientEventEmitter {
     if (isPlugSysinfo(sysInfo)) {
       return this.getPlug({ ...deviceOptions, sysInfo });
     }
+    if (isCameraSysinfo(sysInfo)) {
+      return this.getCamera({ ...deviceOptions, sysInfo });
+    }
     if (isBulbSysinfo(sysInfo)) {
       return this.getBulb({ ...deviceOptions, sysInfo });
     }
@@ -492,11 +518,13 @@ export default class Client extends EventEmitter implements ClientEventEmitter {
   // eslint-disable-next-line class-methods-use-this
   getTypeFromSysInfo(
     sysInfo: { type: string } | { mic_type: string }
-  ): 'plug' | 'bulb' | 'device' {
+  ): 'plug' | 'camera' | 'bulb' | 'device' {
     const type = 'type' in sysInfo ? sysInfo.type : sysInfo.mic_type;
     switch (true) {
       case /plug/i.test(type):
         return 'plug';
+        case /camerea/i.test(type):
+          return 'camera';
       case /bulb/i.test(type):
         return 'bulb';
       default:

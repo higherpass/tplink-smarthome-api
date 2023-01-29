@@ -18,6 +18,7 @@ import {
   processSingleCommandResponse,
   HasErrCode,
 } from '../utils';
+import { CameraSysinfo } from '../camera';
 
 type HasAtLeastOneProperty = {
   [key: string]: unknown;
@@ -33,7 +34,7 @@ export interface ApiModuleNamespace {
   lightingservice: string;
 }
 
-export type Sysinfo = BulbSysinfo | PlugSysinfo;
+export type Sysinfo = BulbSysinfo | PlugSysinfo | CameraSysinfo;
 
 export interface DeviceConstructorOptions {
   client: Client;
@@ -92,6 +93,15 @@ export function isPlugSysinfo(candidate: unknown): candidate is PlugSysinfo {
     ('mac' in candidate || 'ethernet_mac' in candidate) &&
     'feature' in candidate &&
     ('relay_state' in candidate || 'children' in candidate)
+  );
+}
+
+export function isCameraSysinfo(candidate: unknown): candidate is PlugSysinfo {
+  return (
+    isCommonSysinfo(candidate) &&
+    ('type' in candidate || 'mic_type' in candidate) &&
+    ('mac' in candidate || 'ethernet_mac' in candidate) &&
+    'resolution' in candidate && 'camera_switch' in candidate
   );
 }
 
