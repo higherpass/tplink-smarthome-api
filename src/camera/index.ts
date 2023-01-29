@@ -279,7 +279,7 @@ class Camera extends Device {
   */
 
   /**
-   * Gets bulb's SysInfo.
+   * Gets cameras's SysInfo.
    *
    * Requests `system.sysinfo` from device.
    * @returns parsed JSON response

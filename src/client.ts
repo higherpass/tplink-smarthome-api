@@ -610,7 +610,7 @@ export default class Client extends EventEmitter implements ClientEventEmitter {
         try {
           const tmpResponse = JSON.parse(decryptedMsg);
           if (tmpResponse.system.get_sysinfo.system !== undefined) {
-            sysInfo = tmpResponse.system.get_sysinfo.system;
+            sysInfo = tmpResponse.system.get_sysinfo.system;  
           } else {
             response = JSON.parse(decryptedMsg);
             sysInfo = response.system.get_sysinfo;
