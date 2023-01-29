@@ -328,6 +328,8 @@ class Camera extends Device {
     };
   }
 
+  
+
   /**
    * Gets on/off state of Bulb.
    *

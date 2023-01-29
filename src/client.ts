@@ -383,6 +383,9 @@ export default class Client extends EventEmitter implements ClientEventEmitter {
     );
 
     const responseObj = JSON.parse(response);
+    if (responseObj.system.get_sysinfo.system !== undefined) {
+      return responseObj.system.get_sysinfo.system;
+    }
     if (isSysinfoResponse(responseObj)) {
       return responseObj.system.get_sysinfo;
     }
@@ -526,8 +529,8 @@ export default class Client extends EventEmitter implements ClientEventEmitter {
     switch (true) {
       case /plug/i.test(type):
         return 'plug';
-        case /camera/i.test(type):
-          return 'camera';
+      case /camera/i.test(type):
+        return 'camera';
       case /bulb/i.test(type):
         return 'bulb';
       default:
