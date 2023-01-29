@@ -26,6 +26,7 @@ type DeviceDiscovery = { status: string; seenOnDiscovery: number };
 type AnyDeviceDiscovery = (Bulb | Camera | Plug) & Partial<DeviceDiscovery>;
 
 type SysinfoResponse = { system: { get_sysinfo: Sysinfo } };
+type CameraRawResponse = { system: { get_sysinfo: { system: Sysinfo } } };
 type EmeterResponse = PlugEmeterResponse | BulbEmeterResponse | CameraEmeterResponse;
 type CameraEmeterResponse = {
   emeter?: { get_realtime?: { err_code: number } & Realtime };
@@ -596,8 +597,13 @@ export default class Client extends EventEmitter implements ClientEventEmitter {
         let response: DiscoveryResponse;
         let sysInfo: Sysinfo;
         try {
-          response = JSON.parse(decryptedMsg);
-          sysInfo = response.system.get_sysinfo;
+          const tmp_response = JSON.parse(decryptedMsg);
+          if (tmp_response.system.get_sysinfo.system !== undefined) {
+            sysInfo = tmp_response.system.get_sysinfo.system;  
+          } else {
+            response = JSON.parse(decryptedMsg);
+            sysInfo = response.system.get_sysinfo;
+          }
         } catch (err) {
           this.log.debug(
             `client.startDiscovery(): Error parsing JSON: %s\nFrom: ${rinfo.address} ${rinfo.port} Original: [%s] Decrypted: [${decryptedMsg}]`,
