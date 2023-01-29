@@ -1,9 +1,10 @@
 /* eslint-disable no-underscore-dangle */
-//import isEqual from 'lodash.isequal';
-
 import type { SendOptions } from '../client';
-import Device, { isCameraSysinfo } from '../device';
-import type { CommonSysinfo, DeviceConstructorOptions } from '../device';
+import Device, {
+  isCameraSysinfo,
+  CommonSysinfo,
+  DeviceConstructorOptions,
+} from '../device';
 import Cloud from '../shared/cloud';
 import Emeter, { RealtimeNormalized } from '../shared/emeter';
 import Time from '../shared/time';
@@ -155,7 +156,7 @@ class Camera extends Device {
    * @borrows Lighting#getLightState as Bulb.lighting#getLightState
    * @borrows Lighting#setLightState as Bulb.lighting#setLightState
    */
-  readonly lighting: any;
+  // readonly lighting: any;
 
   /**
    * @borrows Time#getTime as Bulb.time#getTime
@@ -328,8 +329,6 @@ class Camera extends Device {
     };
   }
 
-  
-
   /**
    * Gets on/off state of Bulb.
    *
@@ -352,12 +351,13 @@ class Camera extends Device {
    */
 
   async setPowerState(
+    // @ts-ignore will be removed.  debugging
     value: boolean,
+    // @ts-ignore will be removed.  debugging
     sendOptions?: SendOptions
   ): Promise<boolean> {
-    return this.lighting.setLightState({ on_off: value ? 1 : 0 }, sendOptions);
+    return true; // this.lighting.setLightState({ on_off: value ? 1 : 0 }, sendOptions);
   }
-
 
   /**
    * Toggles state of Bulb.
@@ -374,11 +374,11 @@ class Camera extends Device {
   */
 
   private emitEvents(): void {
+    /*
     if (!this.emitEventsEnabled) {
       return;
     }
-
-
+    */
     /*
     if (sysinfoLightState == null) return;
     const powerOn = sysinfoLightState.on_off === 1;

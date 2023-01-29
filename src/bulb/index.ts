@@ -187,7 +187,7 @@ class Bulb extends Device {
    * @borrows Cloud#getFirmwareList as Bulb.cloud#getFirmwareList
    * @borrows Cloud#setServerUrl as Bulb.cloud#setServerUrl
    */
-  readonly cloud = new Cloud(this, 'smartlife.iot.common.cloud');
+  readonly cloud: Cloud = new Cloud(this, 'smartlife.iot.common.cloud');
 
   /**
    * @borrows Emeter#realtime as Bulb.emeter#realtime
@@ -196,7 +196,7 @@ class Bulb extends Device {
    * @borrows Emeter#getMonthStats as Bulb.emeter#getMonthStats
    * @borrows Emeter#eraseStats as Bulb.emeter#eraseStats
    */
-  readonly emeter = new Emeter(this, 'smartlife.iot.common.emeter');
+  readonly emeter: Emeter = new Emeter(this, 'smartlife.iot.common.emeter');
 
   /**
    * @borrows Lighting#lightState as Bulb.lighting#lightState

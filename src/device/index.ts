@@ -18,7 +18,7 @@ import {
   processSingleCommandResponse,
   HasErrCode,
 } from '../utils';
-import { CameraSysinfo } from '../camera';
+import type { CameraSysinfo } from '../camera';
 
 type HasAtLeastOneProperty = {
   [key: string]: unknown;
@@ -97,17 +97,24 @@ export function isPlugSysinfo(candidate: unknown): candidate is PlugSysinfo {
   );
 }
 
-export function isCameraSysinfo(candidate: unknown): candidate is CameraSysinfo {
+export function isCameraSysinfo(
+  candidate: unknown
+): candidate is CameraSysinfo {
   return (
     isCommonSysinfo(candidate) &&
     ('type' in candidate || 'mic_type' in candidate) &&
     ('mac' in candidate || 'ethernet_mac' in candidate) &&
-    'resolution' in candidate && 'camera_switch' in candidate
+    'resolution' in candidate &&
+    'camera_switch' in candidate
   );
 }
 
 function isSysinfo(candidate: unknown): candidate is Sysinfo {
-  return isPlugSysinfo(candidate) || isBulbSysinfo(candidate) || isCameraSysinfo(candidate);
+  return (
+    isPlugSysinfo(candidate) ||
+    isBulbSysinfo(candidate) ||
+    isCameraSysinfo(candidate)
+  );
 }
 
 export interface DeviceEventEmitter {

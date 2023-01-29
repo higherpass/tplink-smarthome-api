@@ -6,7 +6,11 @@ import type log from 'loglevel';
 import { encrypt, decrypt } from 'tplink-smarthome-crypto';
 import type { MarkOptional } from 'ts-essentials';
 
-import Device, { isBulbSysinfo, isPlugSysinfo, isCameraSysinfo } from './device';
+import Device, {
+  isBulbSysinfo,
+  isPlugSysinfo,
+  isCameraSysinfo,
+} from './device';
 import type { Sysinfo } from './device';
 import Bulb from './bulb';
 import Camera from './camera';
@@ -26,8 +30,12 @@ type DeviceDiscovery = { status: string; seenOnDiscovery: number };
 type AnyDeviceDiscovery = (Bulb | Camera | Plug) & Partial<DeviceDiscovery>;
 
 type SysinfoResponse = { system: { get_sysinfo: Sysinfo } };
-//type CameraRawResponse = { system: { get_sysinfo: { system: Sysinfo } } };
-type EmeterResponse = PlugEmeterResponse | BulbEmeterResponse | CameraEmeterResponse;
+// type CameraRawResponse = { system: { get_sysinfo: { system: Sysinfo } } };
+type EmeterResponse =
+  | PlugEmeterResponse
+  | BulbEmeterResponse
+  | CameraEmeterResponse;
+
 type CameraEmeterResponse = {
   emeter?: { get_realtime?: { err_code: number } & Realtime };
 };
@@ -439,7 +447,10 @@ export default class Client extends EventEmitter implements ClientEventEmitter {
    * @param   deviceOptions - passed to [Camera constructor]{@link Camera}
    */
   getCamera(
-    deviceOptions: MarkOptional<ConstructorParameters<typeof Camera>[0], 'client'>
+    deviceOptions: MarkOptional<
+      ConstructorParameters<typeof Camera>[0],
+      'client'
+    >
   ): Camera {
     return new Camera({
       defaultSendOptions: this.defaultSendOptions,
@@ -597,9 +608,9 @@ export default class Client extends EventEmitter implements ClientEventEmitter {
         let response: DiscoveryResponse;
         let sysInfo: Sysinfo;
         try {
-          const tmp_response = JSON.parse(decryptedMsg);
-          if (tmp_response.system.get_sysinfo.system !== undefined) {
-            sysInfo = tmp_response.system.get_sysinfo.system;  
+          const tmpResponse = JSON.parse(decryptedMsg);
+          if (tmpResponse.system.get_sysinfo.system !== undefined) {
+            sysInfo = tmpResponse.system.get_sysinfo.system;
           } else {
             response = JSON.parse(decryptedMsg);
             sysInfo = response.system.get_sysinfo;
